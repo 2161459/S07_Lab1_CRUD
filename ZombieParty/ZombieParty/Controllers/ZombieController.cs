@@ -29,6 +29,45 @@ namespace ZombieParty.Controllers
 
             return View(zombiesList);
         }
+
+        public IActionResult Edit(int id)
+        {
+            ZombieVM zombieVM = new ZombieVM();
+            zombieVM.Zombie = _baseDonnees.Zombies.Find(id); //Ajouter ceci
+            zombieVM.ZombieTypeSelectList = _baseDonnees.ZombieTypes.Select(t => new SelectListItem
+            {
+                Text = t.TypeName,
+                Value = t.Id.ToString()
+            }).OrderBy(t => t.Text);
+
+            return View(zombieVM);
+        }
+
+        [HttpPost] //reçoit les données du formulaire.
+        [ValidateAntiForgeryToken] //protège contre les attaques CSRF.
+        public IActionResult Edit(ZombieVM zombieVM)
+        {
+            if (ModelState.IsValid) //vérifie les validations du modèle.
+            {
+                _baseDonnees.Zombies.Update(zombieVM.Zombie);
+                _baseDonnees.SaveChanges();
+
+                TempData["Success"] = $"Zombie {zombieVM.Zombie.Name} has been modified"; //prépare un message de confirmation.
+
+                return RedirectToAction("Index");
+            }
+
+            zombieVM.ZombieTypeSelectList = _baseDonnees.ZombieTypes
+                .Select(t => new SelectListItem
+                {
+                    Text = t.TypeName,
+                    Value = t.Id.ToString()
+                })
+                .OrderBy(t => t.Text);
+
+            return View(zombieVM);
+        }
+
         public IActionResult Create()
         {
             ZombieVM zombieVM = new ZombieVM();

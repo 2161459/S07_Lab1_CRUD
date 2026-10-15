@@ -22,6 +22,10 @@
                   
                     <h5 class="text-success"> @item.ZombieType.TypeName </h5> @*  Ajouter le TypeName en vert *@
 
+
+                    <a asp-controller="Zombie" asp-action="Edit"asp-route-id="@item.Id"class="btn btn-info">Edit </a> @* Ajouter le bouton Edit *@
+
+
                 </div>
             </div>
         }
