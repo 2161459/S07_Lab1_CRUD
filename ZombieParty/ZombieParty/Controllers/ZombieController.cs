@@ -30,7 +30,7 @@ namespace ZombieParty.Controllers
             return View(zombiesList);
         }
 
-        public IActionResult Edit(int id)
+        public IActionResult Edit(int id) //Ajouter Edit
         {
             ZombieVM zombieVM = new ZombieVM();
             zombieVM.Zombie = _baseDonnees.Zombies.Find(id); //Ajouter ceci
@@ -67,6 +67,40 @@ namespace ZombieParty.Controllers
 
             return View(zombieVM);
         }
+
+
+        public IActionResult Delete(int id)   //GET Delete → Afficher la confirmation
+        {
+            Zombie? zombie = _baseDonnees.Zombies.Find(id);
+
+            if (zombie == null)
+            {
+                return NotFound();
+            }
+
+            return View(zombie);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(int id) //POST DeletePost → Supprimer réellement
+        {
+            Zombie? zombie = _baseDonnees.Zombies.Find(id);
+
+            if (zombie == null)
+            {
+                return NotFound();
+            }
+
+            _baseDonnees.Zombies.Remove(zombie);
+            _baseDonnees.SaveChanges();
+
+            TempData["Success"] = $"Zombie {zombie.Name} terminated";
+
+            return RedirectToAction("Index");
+        }
+
 
         public IActionResult Create()
         {
